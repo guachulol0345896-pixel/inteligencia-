@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard BI · Mortalidad prematura por ENT en hombres</title>
+<style>
+  :root{--ink:#111827;--mut:#6B7280;--line:#E5E7EB;--bg:#F6F7F9;--card:#fff;--red:#C8102E;--blue:#1F3A5F;--green:#059669}
+  *{box-sizing:border-box} body{margin:0;font-family:"Segoe UI",system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--ink)}
+  header{background:var(--blue);color:#fff;padding:18px 28px}
+  header h1{margin:0;font-size:20px;font-weight:600} header p{margin:4px 0 0;font-size:13px;opacity:.85}
+  nav{display:flex;gap:4px;padding:0 28px;background:var(--blue)}
+  nav button{background:transparent;border:0;color:#cbd5e1;padding:10px 16px;font-size:14px;cursor:pointer;border-bottom:3px solid transparent}
+  nav button.on{color:#fff;border-bottom-color:#fff;font-weight:600}
+  main{padding:20px 28px;max-width:1280px;margin:auto}
+  .grid{display:grid;gap:14px} .k{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+  .two{grid-template-columns:1.6fr 1fr} @media(max-width:900px){.two{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+  .kpi .lab{font-size:12px;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}
+  .kpi .val{font-size:26px;white-space:nowrap;font-weight:700;margin-top:4px} .kpi .sub{font-size:12px;color:var(--mut);margin-top:2px}
+  .neg{color:var(--green)} .pos{color:var(--red)}
+  h2{font-size:15px;margin:0 0 8px} .note{font-size:12px;color:var(--mut)}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px}
+  .chip{border:1px solid var(--line);border-radius:14px;padding:3px 10px;font-size:12px;cursor:pointer;user-select:none;background:#fff}
+  .chip.off{opacity:.35}
+  table{border-collapse:collapse;width:100%;font-size:13px} th,td{padding:6px 8px;border-bottom:1px solid var(--line);text-align:right}
+  th:first-child,td:first-child{text-align:left} th{color:var(--mut);font-weight:600;font-size:12px}
+  tr.col td{background:#FDF2F4;font-weight:600}
+  .bar{height:14px;background:#E5E7EB;border-radius:7px;overflow:hidden} .bar>div{height:100%}
+  svg text{font-family:inherit}
+  .hidden{display:none}
+  form label{display:block;font-size:13px;margin:8px 0 3px;color:#374151} form input,form select{width:100%;padding:7px;border:1px solid #D1D5DB;border-radius:6px;font-size:14px}
+  .checks label{display:flex;gap:8px;align-items:center;margin:4px 0} .checks input{width:auto}
+  .btn{margin-top:14px;background:var(--blue);color:#fff;border:0;padding:10px 18px;border-radius:6px;font-size:14px;cursor:pointer}
+  .res{font-size:44px;font-weight:700} .lvl{display:inline-block;padding:4px 12px;border-radius:14px;color:#fff;font-weight:600}
+</style>
+</head>
+<body>
+<header>
+  <h1>Mortalidad prematura por ENT en hombres (30–70 años) · Colombia y comparables</h1>
+  <p>Indicador SH.DYN.NCOM.MA.ZS (Banco Mundial / OMS GHO) · Proyecto final de Inteligencia de Negocios</p>
+</header>
+<nav><button class="on" data-t="t1">Tablero BI</button><button data-t="t2">Autoevaluación (piloto)</button></nav>
+<main>
+<section id="t1">
+  <div class="grid k" id="kpis"></div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="card"><h2>Evolución por país</h2><div class="chips" id="chips"></div><div id="linea"></div>
+      <div class="note">Haz clic en un país para mostrarlo u ocultarlo. Pasa el cursor para ver valores.</div></div>
+    <div class="card"><h2 id="tRank">Ranking</h2><div id="rank"></div></div>
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="card"><h2>Indicadores por país</h2><div id="tabla"></div></div>
+    <div class="card"><h2>Colombia frente a la meta ODS 3.4</h2><div id="ods"></div></div>
+  </div>
+</section>
+<section id="t2" class="hidden">
+  <div class="grid two">
+    <div class="card"><h2>Autoevaluación de riesgo de ENT (prototipo)</h2>
+      <p class="note">Herramienta orientativa del piloto. No es un diagnóstico médico y no guarda datos.</p>
+      <form id="f">
+        <label>Edad (30–70)</label><input id="edad" type="number" min="30" max="70" value="45" required>
+        <div class="grid" style="grid-template-columns:1fr 1fr;gap:10px">
+          <div><label>Peso (kg)</label><input id="peso" type="number" value="80" step="0.1"></div>
+          <div><label>Talla (cm)</label><input id="talla" type="number" value="172"></div></div>
+        <label>Actividad física</label><select id="act"><option value="sedentario">Sedentario</option><option value="moderado" selected>Moderada</option><option value="activo">Activo (≥150 min/sem)</option></select>
+        <label>Consumo de alcohol</label><select id="alc"><option value="nunca">Nunca</option><option value="ocasional">Ocasional</option><option value="frecuente">Frecuente</option></select>
+        <div class="checks"><label><input type="checkbox" id="fum">Fumo actualmente</label>
+          <label><input type="checkbox" id="fam">Familiares directos con ECV, cáncer, diabetes o EPOC</label>
+          <label><input type="checkbox" id="hta">Diagnóstico de hipertensión</label>
+          <label><input type="checkbox" id="dm">Diagnóstico de diabetes o prediabetes</label></div>
+        <label>Síntomas de alerta en el último mes</label>
+        <div class="checks" id="sint"></div>
+        <button class="btn" type="submit">Calcular riesgo</button>
+      </form></div>
+    <div class="card" id="out"><h2>Resultado</h2><p class="note">Completa el formulario y pulsa “Calcular riesgo”.</p></div>
+  </div>
+</section>
+</main>
+<script>
+const D = /*__DATOS__*/null;
+const C = {"Colombia":"#C8102E","Perú":"#7A8B99","Ecuador":"#A3B1BD","Chile":"#5B6D7C","Argentina":"#2F4858","Brasil":"#3E7CB1","México":"#81A4CD"};
+const K = D.kpi, A1 = K.anio_fin, A0 = K.anio_inicio, f1 = v => v.toFixed(1).replace(".", ",");
+const NS = "http://www.w3.org/2000/svg";
+function el(t, a = {}, p) { const e = document.createElementNS(NS, t); for (const k in a) e.setAttribute(k, a[k]); if (p) p.appendChild(e); return e; }
+
+// tabs
+document.querySelectorAll("nav button").forEach(b => b.onclick = () => {
+  document.querySelectorAll("nav button").forEach(x => x.classList.toggle("on", x === b));
+  ["t1", "t2"].forEach(id => document.getElementById(id).classList.toggle("hidden", id !== b.dataset.t));
+});
+
+// KPIs
+const tiles = [
+  ["Colombia " + A1, f1(K.col_valor_actual) + " %", "Prob. de morir por ENT, 30–70 años"],
+  ["Variación " + A0 + "–" + A1, f1(K.col_variacion_rel_pct) + " %", f1(K.col_variacion_abs_pp) + " pp", K.col_variacion_rel_pct < 0],
+  ["Posición en el grupo", K.col_ranking + "° de " + K.n_paises, "1 = menor mortalidad"],
+  ["Brecha vs. promedio", f1(K.brecha_vs_promedio_pp) + " pp", "Promedio grupo " + f1(K.promedio_grupo_actual) + " %", K.brecha_vs_promedio_pp < 0],
+  ["Tendencia últimos 5 años", K.col_pendiente_ult5.toFixed(2).replace(".", ",") + " pp/año", "Pendiente 2000–" + A1 + ": " + K.col_pendiente.toFixed(2).replace(".", ",") + " pp/año", K.col_pendiente_ult5 < 0],
+  ["Ritmo vs. meta ODS 3.4", f1(K.ods_cumplimiento_ritmo_pct) + " %", "del ritmo de reducción requerido", K.ods_cumplimiento_ritmo_pct >= 100],
+];
+if (K.brecha_sexo_pp !== undefined) tiles.push(["Brecha H–M (2019)", f1(K.brecha_sexo_pp) + " pp", "Hombres " + f1(K.col_hombres_2019) + " % · Mujeres " + f1(K.col_mujeres_2019) + " %"]);
+document.getElementById("kpis").innerHTML = tiles.map(t => `<div class="card kpi"><div class="lab">${t[0]}</div><div class="val ${t[3] === undefined ? "" : t[3] ? "neg" : "pos"}">${t[1]}</div><div class="sub">${t[2]}</div></div>`).join("");
+
+// line chart
+const act = new Set(Object.keys(D.series));
+function linea() {
+  const box = document.getElementById("linea"); box.innerHTML = "";
+  const W = 720, H = 330, m = {l: 40, r: 80, t: 10, b: 28};
+  const s = el("svg", {viewBox: `0 0 ${W} ${H}`, width: "100%"}, box);
+  const all = Object.values(D.series).flat(), ymax = Math.ceil(Math.max(...all.map(d => d[1])) / 5) * 5;
+  const x = a => m.l + (a - A0) / (A1 - A0) * (W - m.l - m.r), y = v => m.t + (1 - v / ymax) * (H - m.t - m.b);
+  for (let v = 0; v <= ymax; v += 5) { el("line", {x1: m.l, x2: W - m.r, y1: y(v), y2: y(v), stroke: "#E5E7EB"}, s); el("text", {x: m.l - 6, y: y(v) + 4, "text-anchor": "end", "font-size": 11, fill: "#6B7280"}, s).textContent = v; }
+  for (let a = A0; a <= A1; a += 3) el("text", {x: x(a), y: H - 8, "text-anchor": "middle", "font-size": 11, fill: "#6B7280"}, s).textContent = a;
+  const labs = [];
+  const tip = el("text", {x: m.l + 8, y: m.t + 14, "font-size": 12, "font-weight": 600}, s);
+  for (const [p, pts] of Object.entries(D.series)) {
+    if (!act.has(p)) continue; const col = p === "Colombia";
+    el("path", {d: pts.map((d, i) => (i ? "L" : "M") + x(d[0]) + "," + y(d[1])).join(""), fill: "none", stroke: C[p], "stroke-width": col ? 3 : 1.6}, s);
+    const u = pts[pts.length - 1]; labs.push({p, yy: y(u[1]) + 4, xx: x(u[0]) + 6, col});
+    pts.forEach(d => { const c = el("circle", {cx: x(d[0]), cy: y(d[1]), r: 6, fill: "transparent"}, s);
+      c.onmouseenter = () => { tip.textContent = `${p} ${d[0]}: ${f1(d[1])} %`; tip.setAttribute("fill", C[p]); }; });
+  }
+  labs.sort((a, b) => a.yy - b.yy); for (let i = 1; i < labs.length; i++) if (labs[i].yy - labs[i - 1].yy < 13) labs[i].yy = labs[i - 1].yy + 13;
+  labs.forEach(l => el("text", {x: l.xx, y: l.yy, "font-size": 11, fill: C[l.p], "font-weight": l.col ? 700 : 400}, s).textContent = l.p);
+}
+document.getElementById("chips").innerHTML = Object.keys(D.series).map(p => `<span class="chip" data-p="${p}" style="border-color:${C[p]};color:${C[p]}">${p}</span>`).join("");
+document.querySelectorAll(".chip").forEach(c => c.onclick = () => { const p = c.dataset.p; act.has(p) ? act.delete(p) : act.add(p); c.classList.toggle("off"); linea(); });
+linea();
+
+// ranking
+document.getElementById("tRank").textContent = "Ranking " + A1 + " (menor a mayor)";
+const r = [...D.resumen].sort((a, b) => a["valor_" + A1] - b["valor_" + A1]), mx = Math.max(...r.map(d => d["valor_" + A1]));
+document.getElementById("rank").innerHTML = r.map(d => `<div style="display:flex;align-items:center;gap:8px;margin:7px 0;font-size:13px">
+  <div style="width:78px;${d.pais === "Colombia" ? "font-weight:700;color:#C8102E" : ""}">${d.pais}</div>
+  <div class="bar" style="flex:1"><div style="width:${d["valor_" + A1] / mx * 100}%;background:${C[d.pais]}"></div></div>
+  <div style="width:46px;text-align:right">${f1(d["valor_" + A1])} %</div></div>`).join("") +
+  `<p class="note">Promedio simple del grupo: ${f1(K.promedio_grupo_actual)} %</p>`;
+
+// table
+document.getElementById("tabla").innerHTML = `<table><tr><th>País</th><th>${A0}</th><th>${A1}</th><th>Var. %</th><th>TCAC %</th><th>pp/año</th><th>Años ↑</th></tr>` +
+  r.map(d => `<tr class="${d.pais === "Colombia" ? "col" : ""}"><td>${d.pais}</td><td>${f1(d["valor_" + A0])}</td><td>${f1(d["valor_" + A1])}</td><td>${f1(d.variacion_rel_pct)}</td><td>${d.tcac_pct.toFixed(2).replace(".", ",")}</td><td>${d.pendiente_pp_anio.toFixed(2).replace(".", ",")}</td><td>${d.anios_con_aumento}</td></tr>`).join("") + "</table>";
+
+// ODS
+const pct = Math.min(K.ods_cumplimiento_ritmo_pct, 100);
+document.getElementById("ods").innerHTML = `
+  <p style="font-size:13px;margin:4px 0">Línea base 2015: <b>${f1(K.ods_linea_base)} %</b> · Meta 2030 (−1/3): <b>${f1(K.ods_meta_2030)} %</b></p>
+  <p style="font-size:13px;margin:4px 0">Reducción requerida: <b>${K.ods_reduccion_requerida_anual.toFixed(2).replace(".", ",")} pp/año</b> · Observada 2015–${A1}: <b>${K.ods_reduccion_real_anual.toFixed(2).replace(".", ",")} pp/año</b></p>
+  <div class="bar" style="height:22px;margin:12px 0"><div style="width:${pct}%;background:${pct >= 100 ? "#059669" : "#C8102E"}"></div></div>
+  <p style="font-size:13px">Colombia avanza al <b>${f1(K.ods_cumplimiento_ritmo_pct)} %</b> del ritmo necesario. A esa velocidad llegaría a <b>${f1(K.ods_proyeccion_2030)} %</b> en 2030.</p>
+  <p class="note">La meta 3.4 de los Objetivos de Desarrollo Sostenible propone reducir en un tercio la mortalidad prematura por ENT entre 2015 y 2030.</p>`;
+
+// autoevaluación (misma lógica que src/riesgo_ent.py)
+const SINT = {dolor_toracico: "Dolor u opresión en el pecho", disnea: "Falta de aire con esfuerzos leves", poliuria_polidipsia: "Sed o ganas de orinar excesivas", tos_persistente: "Tos de más de 3 semanas", perdida_peso: "Pérdida de peso sin explicación"};
+document.getElementById("sint").innerHTML = Object.entries(SINT).map(([k, v]) => `<label><input type="checkbox" value="${k}">${v}</label>`).join("");
+const NOM = {edad: "Edad", tabaco: "Tabaco", imc: "Exceso de peso", actividad_fisica: "Inactividad física", alcohol: "Alcohol", antecedente_familiar: "Antecedente familiar", hipertension: "Hipertensión", diabetes: "Diabetes"};
+document.getElementById("f").onsubmit = ev => {
+  ev.preventDefault(); const g = id => document.getElementById(id);
+  const edad = +g("edad").value; if (edad < 30 || edad > 70) { alertBox("El piloto está dirigido a personas de 30 a 70 años."); return; }
+  const imc = +(g("peso").value / (g("talla").value / 100) ** 2).toFixed(1);
+  const fz = {edad: edad < 40 ? 0 : edad < 50 ? 10 : edad < 60 ? 20 : 30, tabaco: g("fum").checked ? 15 : 0,
+    imc: imc < 25 ? 0 : imc < 30 ? 5 : 10, actividad_fisica: {sedentario: 10, moderado: 4, activo: 0}[g("act").value],
+    alcohol: {frecuente: 8, ocasional: 2, nunca: 0}[g("alc").value], antecedente_familiar: g("fam").checked ? 7 : 0,
+    hipertension: g("hta").checked ? 10 : 0, diabetes: g("dm").checked ? 10 : 0};
+  const pts = Math.min(Object.values(fz).reduce((a, b) => a + b, 0), 100);
+  const niv = pts < 25 ? "Bajo" : pts < 50 ? "Moderado" : "Alto", col = {Bajo: "#059669", Moderado: "#D97706", Alto: "#C8102E"}[niv];
+  const al = [...document.querySelectorAll("#sint input:checked")].map(i => SINT[i.value]);
+  const rec = al.length ? "Consulta médica prioritaria: reporta síntomas de alerta." : niv === "Alto" ? "Agenda un chequeo preventivo en tu EPS en el próximo mes." : niv === "Moderado" ? "Inscríbete en un programa de prevención (actividad física, nutrición o cesación de tabaco)." : "Mantén tus hábitos y repite la autoevaluación en 12 meses.";
+  const top = Object.entries(fz).filter(e => e[1] > 0).sort((a, b) => b[1] - a[1]).slice(0, 3).map(e => NOM[e[0]]);
+  g("out").innerHTML = `<h2>Resultado</h2><div class="res" style="color:${col}">${pts}<span style="font-size:18px;color:#6B7280"> / 100</span></div>
+    <span class="lvl" style="background:${col}">Riesgo ${niv}</span>
+    <p style="font-size:14px"><b>IMC:</b> ${f1(imc)} · <b>Principales factores:</b> ${top.join(", ") || "ninguno relevante"}</p>
+    ${al.length ? `<p style="font-size:14px;color:#C8102E"><b>Síntomas de alerta:</b> ${al.join("; ")}</p>` : ""}
+    <p style="font-size:15px;background:#F3F4F6;padding:10px;border-radius:6px"><b>Recomendación:</b> ${rec}</p>
+    <p class="note">Contexto poblacional: en Colombia, ${f1(K.col_valor_actual)} % de los hombres de 30 años moriría antes de los 70 por ENT (${A1}).</p>`;
+};
+function alertBox(t) { document.getElementById("out").innerHTML = `<h2>Resultado</h2><p style="color:#C8102E">${t}</p>`; }
+</script>
+</body>
+</html>

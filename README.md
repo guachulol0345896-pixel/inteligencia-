@@ -1,26 +1,24 @@
-# Proyecto ENT - Inteligencia de negocios
+# Proyecto Final BI – Mortalidad prematura por ENT en hombres (30–70 años)
 
-Trabajo académico sobre mortalidad prematura por enfermedades no transmisibles y un prototipo orientativo de autoevaluación.
+Programa que ejecuta el ciclo de BI: extracción → limpieza → análisis/KPI → gráficas → Excel → dashboard.
 
-## Entrega del proyecto
-
-El paquete del proyecto se preparó conservando los archivos originales y sustituyendo `outputs/Base_Datos_Consolidada_ENT.xlsx` por el archivo `basededatos.xlsx` enviado por separado.
-
-**Estado de la publicación:** los archivos del proyecto todavía deben añadirse al repositorio. Este README no confirma que la carga del ZIP esté terminada.
-
-## Estructura del paquete
-
-- `src/`: scripts Python y plantilla del dashboard.
-- `data/raw/`: datos originales de entrada.
-- `data/processed/`: resultados consolidados.
-- `outputs/`: dashboard HTML, libro Excel, gráficas y evidencias.
-
-## Ejecución (una vez subidos los archivos)
-
-```bash
+## Requisitos
+```
 pip install pandas numpy matplotlib openpyxl
-python src/pipeline_ent.py
-python src/riesgo_ent.py
 ```
 
-El módulo de autoevaluación es un prototipo académico y no sustituye la valoración médica.
+## Ejecución
+```
+python src/pipeline_ent.py                       # usa data/raw/SH.DYN.NCOM.MA.ZS_extraccion.csv
+python src/pipeline_ent.py --entrada <CSV oficial del Banco Mundial>   # actualiza con la versión 2000-2021
+python src/riesgo_ent.py                         # casos de prueba del módulo de autoevaluación
+```
+
+## Salidas
+- `outputs/Base_Datos_Consolidada_ENT.xlsx` – base consolidada (10 hojas)
+- `outputs/dashboard_ent.html` – tablero interactivo + autoevaluación (abrir en el navegador)
+- `outputs/graficas/` – gráficas G1–G7
+- `data/processed/` – tabla de hechos, resumen por país y KPI (JSON)
+
+Fuente: Banco Mundial, indicador SH.DYN.NCOM.MA.ZS (origen OMS GHO). Licencia CC BY 4.0.
+El módulo de autoevaluación es orientativo y no constituye diagnóstico médico.

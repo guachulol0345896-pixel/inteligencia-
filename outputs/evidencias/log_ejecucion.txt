@@ -1,0 +1,20 @@
+2026-11-13 11:14:06,678 | INFO | Extracción: 7 filas x 24 columnas desde SH.DYN.NCOM.MA.ZS_extraccion.csv
+2026-11-13 11:14:06,681 | INFO | Limpieza | Columnas sin nombre | 24 -> 24 | Columnas residuales eliminadas
+2026-11-13 11:14:06,682 | INFO | Limpieza | Filtro de países | 7 -> 7 | Se conservan COL, PER, ECU, CHL, ARG, BRA, MEX
+2026-11-13 11:14:06,686 | INFO | Limpieza | Despivotado | 7 -> 140 | 20 columnas de año convertidas en filas
+2026-11-13 11:14:06,687 | INFO | Limpieza | Filtro de periodo | 140 -> 140 | Años 2000-2021
+2026-11-13 11:14:06,687 | INFO | Limpieza | Valores nulos | 140 -> 140 | Se eliminan años sin dato publicado (no se imputan)
+2026-11-13 11:14:06,688 | INFO | Limpieza | Duplicados | 140 -> 140 | Clave única país-año
+2026-11-13 11:14:06,689 | INFO | Limpieza | Validación de rango | 140 -> 140 | Valores fuera de 0-100 % descartados
+2026-11-13 11:14:06,694 | INFO | Limpieza | Campos derivados | 140 -> 140 | pais (ES), variacion_anual_pp, indice_base2000, quinquenio, es_colombia
+2026-11-13 11:14:06,712 | INFO | KPI calculados: {"anio_inicio": 2000, "anio_fin": 2019, "col_valor_actual": 10.8, "col_valor_inicial": 15.9, "col_variacion_abs_pp": -5.1, "col_variacion_rel_pct": -32.1}
+2026-11-13 11:14:06,875 | INFO | Gráfica generada: g1_evolucion_paises.png
+2026-11-13 11:14:06,995 | INFO | Gráfica generada: g2_ranking_ultimo_anio.png
+2026-11-13 11:14:07,089 | INFO | Gráfica generada: g3_variacion_relativa.png
+2026-11-13 11:14:07,210 | INFO | Gráfica generada: g4_colombia_vs_promedio_ods.png
+2026-11-13 11:14:07,319 | INFO | Gráfica generada: g5_variacion_anual_colombia.png
+2026-11-13 11:14:07,502 | INFO | Gráfica generada: g6_mapa_calor_quinquenios.png
+2026-11-13 11:14:07,577 | INFO | Gráfica generada: g7_brecha_sexo_colombia.png
+2026-11-13 11:14:07,635 | INFO | Excel consolidado: Base_Datos_Consolidada_ENT.xlsx
+2026-11-13 11:14:07,640 | INFO | Dashboard generado: dashboard_ent.html
+2026-11-13 11:14:07,640 | INFO | Pipeline finalizado correctamente.

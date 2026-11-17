@@ -1,0 +1,3 @@
+Caso 1: edad=35 IMC=23.2 -> puntaje=0 nivel=Bajo | factores=[] | Mantén tus hábitos y repite la autoevaluación en 12 meses.
+Caso 2: edad=52 IMC=29.7 -> puntaje=59 nivel=Alto | factores=['edad', 'tabaco', 'actividad_fisica'] | Agenda un chequeo preventivo en tu EPS en el próximo mes.
+Caso 3: edad=64 IMC=32.9 -> puntaje=93 nivel=Alto | factores=['edad', 'tabaco', 'imc'] | Consulta médica prioritaria: reporta síntomas de alerta.

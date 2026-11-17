@@ -1,21 +1,26 @@
 # Proyecto ENT - Inteligencia de negocios
 
-Proyecto académico de análisis de mortalidad prematura por enfermedades no transmisibles en Colombia y países de referencia. Incluye scripts Python para ETL, indicadores KPI, gráficas y un tablero HTML con un prototipo de autoevaluación orientativa.
+Trabajo académico sobre mortalidad prematura por enfermedades no transmisibles y un prototipo orientativo de autoevaluación.
 
-## Archivos
-- `src/`: programa de extracción, limpieza, análisis y autoevaluación.
-- `data/raw/`: datos de entrada.
-- `data/processed/`: resultados procesados.
-- `outputs/dashboard_ent.html`: dashboard para abrir en un navegador.
-- `outputs/Base_Datos_Consolidada_ENT.xlsx`: archivo Excel de base de datos, sustituido por la versión entregada aparte por el equipo.
+## Entrega del proyecto
 
-## Requisitos y ejecución
+El paquete del proyecto se preparó conservando los archivos originales y sustituyendo `outputs/Base_Datos_Consolidada_ENT.xlsx` por el archivo `basededatos.xlsx` enviado por separado.
+
+**Estado de la publicación:** los archivos del proyecto todavía deben añadirse al repositorio. Este README no confirma que la carga del ZIP esté terminada.
+
+## Estructura del paquete
+
+- `src/`: scripts Python y plantilla del dashboard.
+- `data/raw/`: datos originales de entrada.
+- `data/processed/`: resultados consolidados.
+- `outputs/`: dashboard HTML, libro Excel, gráficas y evidencias.
+
+## Ejecución (una vez subidos los archivos)
+
 ```bash
 pip install pandas numpy matplotlib openpyxl
 python src/pipeline_ent.py
 python src/riesgo_ent.py
 ```
 
-El módulo de autoevaluación es un prototipo académico y no sustituye una valoración médica.
-
-Fuente de los indicadores: Banco Mundial, SH.DYN.NCOM.MA.ZS (origen OMS).
+El módulo de autoevaluación es un prototipo académico y no sustituye la valoración médica.
